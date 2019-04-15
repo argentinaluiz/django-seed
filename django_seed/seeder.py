@@ -40,12 +40,13 @@ class ModelSeeder(object):
 
             field_name = field.name
 
-            if field.get_default(): 
+            if field.editable and field.get_default():
                 formatters[field_name] = field.get_default()
                 continue
             
             if isinstance(field, (ForeignKey, ManyToManyField, OneToOneField)):
-                formatters[field_name] = self.build_relation(field, field.related_model)
+                if not field.name.endswith('_ptr') and not field.name.endswith('_ctype'):
+                    formatters[field_name] = self.build_relation(field, field.related_model)
                 continue
 
             if isinstance(field, AutoField):
